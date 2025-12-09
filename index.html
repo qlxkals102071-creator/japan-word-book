@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 일본어 정복 🦊</title>
+    <style>
+        /* 기본 설정 */
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+
+        .screen { display: none; width: 100%; max-width: 500px; }
+        .active { display: block !important; }
+
+        h1 { color: #FF8C00; margin-bottom: 30px; line-height: 1.4; }
+
+        button {
+            background-color: #FFD700;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            width: 80%;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:active { transform: scale(0.95); }
+
+        #global-mute-btn {
+            position: fixed; top: 10px; right: 10px;
+            width: 50px; height: 50px; border-radius: 50%;
+            padding: 0; font-size: 24px;
+            background-color: white; border: 2px solid #ddd;
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            width: auto !important; min-width: 50px;
+        }
+
+        #feedback-box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; height: 200px; background-color: white;
+            border: 5px solid #ccc; border-radius: 20px;
+            display: none; align-items: center; justify-content: center;
+            z-index: 200; font-size: 60px; font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        #wrong-list-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 300;
+        }
+
+        .popup-content {
+            background: white; padding: 20px; border-radius: 15px;
+            width: 90%; max-height: 80vh; text-align: center;
+            position: relative; display: flex; flex-direction: column;
+            align-items: center;
+        }
+
+        .popup-scroll-area {
+            overflow-y: auto; flex: 1; margin: 10px 0;
+            border-top: 1px solid #eee; border-bottom: 1px solid #eee; width: 100%;
+        }
+
+        .btn-popup-close-x {
+            position: absolute; top: 15px; right: 20px;
+            background: none; border: none; font-size: 28px;
+            font-weight: bold; color: #aaa; cursor: pointer;
+            width: auto !important; padding: 0; margin: 0; box-shadow: none; z-index: 10;
+        }
+
+        /* 버튼 색상 */
+        .btn-hira { background-color: #FFD700; color: #333; height: 80px; font-size: 22px; }
+        .btn-kata { background-color: #FFA500; color: white; height: 80px; font-size: 22px; }
+        .btn-sheet { background-color: #4CAF50; color: white; height: 80px; font-size: 22px; }
+        
+        .btn-mode-study { background-color: #87CEEB; color: white; height: 80px; font-size: 22px; }
+        .btn-mode-test { background-color: #FF6347; color: white; height: 80px; font-size: 22px; }
+        
+        .btn-count-20 { background-color: #20B2AA; color: white; height: 70px; font-size: 20px; }
+        .btn-count-30 { background-color: #FF69B4; color: white; height: 70px; font-size: 20px; }
+        .btn-count-40 { background-color: #FF7F50; color: white; height: 70px; font-size: 20px; }
+        .btn-count-all { background-color: #9370DB; color: white; height: 70px; font-size: 20px; }
+
+        .btn-home-small {
+            position: absolute; top: 10px; left: 10px; width: auto;
+            padding: 8px 15px; font-size: 14px; background-color: #ddd; color: #555;
+            box-shadow: none; z-index: 10;
+        }
+
+        .btn-sound { background-color: #87CEEB; color: white; margin-bottom: 30px; width: 60%;}
+        .btn-correct { background-color: #90EE90; width: 40%; }
+        .btn-wrong { background-color: #FFB6C1; width: 40%; }
+        
+        .btn-test-sound { 
+            background-color: #1E90FF; color: white; width: 40%; 
+            margin-top: 0px; margin-bottom: 30px; font-size: 18px; padding: 10px 20px;
+        }
+
+        .btn-option { 
+            background-color: white; border: 2px solid #FF8C00; color: #333; 
+            font-size: 22px; /* 단어 뜻이 길어질 수 있어서 조절 */
+            width: 30%; height: 100px; /* 높이 조금 키움 */
+            margin: 5px; padding: 5px;
+            overflow: hidden; text-overflow: ellipsis; 
+            display: flex; align-items: center; justify-content: center;
+            word-break: keep-all; line-height: 1.2;
+        }
+        .options-container { display: flex; justify-content: center; width: 100%; margin-top: 10px; }
+        .btn-close { background-color: #DDDDDD; width: 50%; margin-top: 20px;}
+
+        /* [NEW] 문제 표시 스타일 (발음 작게, 일본어 크게) */
+        .question-container { margin-top: 30px; margin-bottom: 10px; }
+        .pron-small { font-size: 30px; color: #888; margin-bottom: 5px; min-height: 40px;}
+        .jp-big { font-size: 70px; font-weight: bold; color: #333; line-height: 1.1; word-break: keep-all;}
+        
+        /* 공부 모드에서 보여줄 텍스트 */
+        .meaning-text { font-size: 40px; font-weight: bold; color: #1E90FF; margin: 20px 0; visibility: hidden; }
+
+        .score-text { font-size: 60px; font-weight: bold; color: #1E90FF; margin: 20px 0; }
+        .info-text { font-size: 18px; color: #555; margin-bottom: 10px; }
+        .grade-msg { font-size: 24px; font-weight: bold; margin: 15px 0; min-height: 30px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 15px; font-size: 18px; text-align: center; }
+        th { background-color: #FF8C00; color: white; }
+        
+        #loading-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.9); z-index: 500;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="global-mute-btn" onclick="toggleGlobalMute()">🔊</button>
+    <div id="feedback-box"></div>
+
+    <div id="loading-screen">
+        <h2>데이터 가져오는 중... 🦊</h2>
+        <p>잠시만 기다려주세요!</p>
+    </div>
+
+    <div id="start-screen" class="screen active">
+        <h1>일본어 문자 & 단어<br>완전 정복 🦊</h1>
+        <p class="info-text">공부할 내용을 선택하세요!</p>
+        <button class="btn-hira" onclick="selectCharType('hiragana')">히라가나 (あ)</button>
+        <button class="btn-kata" onclick="selectCharType('katakana')">카타카나 (ア)</button>
+        <button class="btn-sheet" onclick="loadSheetData()">📄 구글 시트 단어장</button>
+    </div>
+
+    <div id="mode-select-screen" class="screen">
+        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
+        <h1 id="selected-mode-title">히라가나</h1>
+        <p class="info-text">학습 방식을 선택하세요!</p>
+        <button class="btn-mode-study" onclick="gotoQuantitySelect()">📖 공부하기<br><span style="font-size:14px">(카드 뒤집기)</span></button>
+        <button class="btn-mode-test" onclick="startTest()">📝 시험보기<br><span style="font-size:14px">(객관식 테스트)</span></button>
+    </div>
+
+    <div id="quantity-select-screen" class="screen">
+        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
+        <h1 style="color:#87CEEB">공부 범위 선택</h1>
+        <p class="info-text">몇 개의 단어를 공부할까요?</p>
+        <button class="btn-count-20" onclick="startStudy('20')">🌱 20개만 하기</button>
+        <button class="btn-count-30" onclick="startStudy('30')">🎵 30개만 하기</button>
+        <button class="btn-count-40" onclick="startStudy('40')">🔥 40개 도전</button>
+        <button class="btn-count-all" onclick="startStudy('all')">👑 전체 다 하기</button>
+    </div>
+
+    <div id="study-screen" class="screen">
+        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
+        <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#FF8C00;">공부 모드</div>
+        <div id="study-progress" class="info-text">1 / 46</div>
+        
+        <div class="question-container">
+            <div id="study-pron" class="pron-small"></div>
+            <div id="study-jp" class="jp-big"></div>
+        </div>
+        
+        <div id="study-meaning" class="meaning-text">뜻</div>
+
+        <button class="btn-sound" onclick="playSoundAndShowText()">🔊 발음/뜻 보기</button>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <button class="btn-correct" onclick="checkStudyAnswer(true)">알아요!</button>
+            <button class="btn-wrong" onclick="checkStudyAnswer(false)">몰라요...</button>
+        </div>
+    </div>
+
+    <div id="test-screen" class="screen">
+        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
+        <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#FF6347;">시험 모드 (20문제)</div>
+        <div id="test-progress" class="info-text">1 / 20</div>
+        
+        <p class="info-text">다음 단어의 뜻은?</p>
+        
+        <div class="question-container">
+            <div id="test-pron" class="pron-small">pron</div>
+            <div id="test-jp" class="jp-big">Japan</div>
+        </div>
+
+        <button class="btn-test-sound" onclick="playTestSound()">🔊 발음 듣기</button>
+        <div class="options-container" id="options-container"></div>
+    </div>
+
+    <div id="result-screen" class="screen">
+        <h1>결과 발표!</h1>
+        <div id="score-count" class="info-text">맞은 개수: 0 / 0</div>
+        <div id="grade-msg" class="grade-msg"></div>
+        <div id="final-score" class="score-text">0 점</div>
+        <div id="wrong-msg" style="display:none; margin-top:20px;">
+            <button style="background-color: #FFB6C1;" onclick="openWrongList()">오답 목록 보기</button>
+        </div>
+        <button style="background-color: #DDDDDD;" onclick="showScreen('start-screen')">처음으로</button>
+    </div>
+
+    <div id="wrong-list-popup">
+        <div class="popup-content">
+            <button class="btn-popup-close-x" onclick="closeWrongList()">✕</button>
+            <h2>오답 노트</h2>
+            <p id="wrong-count-display" style="color: red; font-weight: bold;">총 0개 틀림</p>
+            <div class="popup-scroll-area">
+                <table id="wrong-table">
+                    <thead><tr><th>단어</th><th>발음</th><th>뜻</th></tr></thead>
+                    <tbody id="wrong-table-body"></tbody>
+                </table>
+            </div>
+            <button class="btn-close" onclick="closeWrongList()">닫기 (Close)</button>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // [중요] 여기에 구글 시트 CSV 링크를 넣어주세요!
+        // ============================================================
+        const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGxiRP3J-FthdSErZu8BhWc85O2_eeOGqYaX_YILIqoB0HbZBGkLFsOCsoe55-0ZTzVKLxpicjie4n/pub?gid=0&single=true&output=csv";
+        // ============================================================
+
+        // 기본 데이터 (히라가나/카타카나) - 구조를 {jp, pron, mean}으로 통일
+        // 히라가나/카타카나는 '뜻'이 그냥 발음과 같음
+        const hiraganaRaw = {
+            'あ':'a','い':'i','う':'u','え':'e','お':'o','か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko','さ':'sa','し':'shi','す':'su','せ':'se','そ':'so','た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to','な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no','は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho','ま':'ma','み':'mi','む':'mu','め':'me','も':'mo','や':'ya','ゆ':'yu','よ':'yo','ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro','わ':'wa','を':'wo','ん':'n',
+            'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go','ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo','だ':'da','ぢ':'ji','づ':'zu','で':'de','ど':'do','ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo','ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po'
+        };
+        const katakanaRaw = {
+            'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o','カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko','サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so','タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to','ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no','ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho','マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo','ヤ':'ya','ユ':'yu','ヨ':'yo','ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro','ワ':'wa','ヲ':'wo','ン':'n',
+            'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go','ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ゾ':'zo','ダ':'da','ヂ':'ji','ヅ':'zu','데':'de','ド':'do','バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo','パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po'
+        };
+
+        // 데이터 변환 함수 (객체 -> 배열 [{jp, pron, mean}])
+        function convertToObjArray(rawData) {
+            const arr = [];
+            for (let key in rawData) {
+                if(!key) continue;
+                arr.push({ jp: key, pron: rawData[key], mean: rawData[key] }); // 문자는 뜻도 발음과 동일 취급
+            }
+            return arr;
+        }
+
+        const hiraganaData = convertToObjArray(hiraganaRaw);
+        const katakanaData = convertToObjArray(katakanaRaw);
+
+        // 데이터 변수
+        let currentMode = ''; 
+        let currentDataList = []; // 현재 선택된 데이터 리스트 (배열)
+        let sheetData = []; // 시트 데이터
+        let studyType = ''; 
+        let quizList = []; 
+        let wrongList = []; 
+        let currentIndex = 0; 
+        let score = 0;
+        const TEST_QUESTION_COUNT = 20;
+        let isMuted = false; 
+        let isProcessing = false; 
+        let currentTestItem = null;
+
+        // --- 구글 시트 불러오기 ---
+        async function loadSheetData() {
+            if (GOOGLE_SHEET_URL.includes("여기에")) {
+                alert("HTML 파일을 열어서 구글 시트 CSV 링크를 넣어주세요!");
+                return;
+            }
+            document.getElementById('loading-screen').style.display = 'flex';
+            try {
+                const response = await fetch(GOOGLE_SHEET_URL);
+                const text = await response.text();
+                sheetData = parseCSV(text);
+                
+                if (sheetData.length === 0) {
+                    alert("데이터가 없거나 불러오지 못했어요 ㅠㅠ");
+                    document.getElementById('loading-screen').style.display = 'none';
+                    return;
+                }
+                currentDataList = sheetData;
+                currentMode = 'sheet';
+                document.getElementById('selected-mode-title').innerText = "단어장 모드";
+                document.getElementById('loading-screen').style.display = 'none';
+                showScreen('mode-select-screen');
+            } catch (error) {
+                console.error(error);
+                alert("구글 시트 연결 실패! 인터넷을 확인해주세요.");
+                document.getElementById('loading-screen').style.display = 'none';
+            }
+        }
+
+        // CSV 파싱 (3열 구조: jp, pron, mean)
+        function parseCSV(text) {
+            const lines = text.trim().split('\n');
+            const data = [];
+            lines.forEach(line => {
+                // 따옴표 무시하고 쉼표로 분리
+                const parts = line.split(','); 
+                if (parts.length >= 3) {
+                    const jp = parts[0].trim().replace(/^"|"$/g, '');
+                    const pron = parts[1].trim().replace(/^"|"$/g, '');
+                    const mean = parts[2].trim().replace(/^"|"$/g, '');
+                    if(jp && mean) data.push({ jp: jp, pron: pron, mean: mean });
+                }
+            });
+            return data;
+        }
+
+        // --- 기본 로직 ---
+        function toggleGlobalMute() {
+            isMuted = !isMuted;
+            const btn = document.getElementById('global-mute-btn');
+            if (isMuted) {
+                btn.innerText = '🔇';
+                if(window.speechSynthesis) window.speechSynthesis.cancel();
+            } else {
+                btn.innerText = '🔊';
+            }
+        }
+
+        function speakText(text) {
+            if (isMuted) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            utterance.rate = 0.8;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function goHome() {
+            if(confirm("정말 처음 화면으로 돌아갈까요?")) {
+                showScreen('start-screen');
+                if(window.speechSynthesis) window.speechSynthesis.cancel();
+            }
+        }
+
+        function selectCharType(type) {
+            currentMode = type;
+            if (type === 'hiragana') {
+                currentDataList = hiraganaData;
+                document.getElementById('selected-mode-title').innerText = "히라가나";
+            } else {
+                currentDataList = katakanaData;
+                document.getElementById('selected-mode-title').innerText = "카타카나";
+            }
+            showScreen('mode-select-screen');
+        }
+
+        function gotoQuantitySelect() { showScreen('quantity-select-screen'); }
+
+        // --- 공부 모드 (카드) ---
+        function startStudy(amount) {
+            studyType = 'study';
+            // 복사해서 섞기
+            let temp = [...currentDataList];
+            temp.sort(() => Math.random() - 0.5);
+
+            if (amount === 'all') quizList = temp; 
+            else quizList = temp.slice(0, parseInt(amount)); 
+            
+            wrongList = []; currentIndex = 0; score = 0;
+            updateStudyScreen(); showScreen('study-screen');
+        }
+
+        function updateStudyScreen() {
+            if (currentIndex >= quizList.length) { finishGame(); return; }
+            const item = quizList[currentIndex];
+            
+            // [NEW] 3단 구조 표시
+            document.getElementById('study-jp').innerText = item.jp;
+            document.getElementById('study-pron').innerText = item.pron;
+            
+            document.getElementById('study-progress').innerText = `${currentIndex + 1} / ${quizList.length}`;
+            
+            const meanDisplay = document.getElementById('study-meaning');
+            meanDisplay.style.visibility = 'hidden'; 
+            meanDisplay.innerText = '';
+        }
+
+        function playSoundAndShowText() {
+            const item = quizList[currentIndex];
+            const meanDisplay = document.getElementById('study-meaning');
+            meanDisplay.innerText = item.mean; // 뜻 보여주기
+            meanDisplay.style.visibility = 'visible';
+            speakText(item.jp); // 일본어 읽기
+        }
+
+        function checkStudyAnswer(isCorrect) {
+            const item = quizList[currentIndex];
+            if (isCorrect) score++; else wrongList.push(item);
+            currentIndex++; updateStudyScreen();
+        }
+
+        // --- 시험 모드 (객관식) ---
+        function startTest() {
+            studyType = 'test'; isProcessing = false;
+            let temp = [...currentDataList];
+            temp.sort(() => Math.random() - 0.5);
+            
+            const qCount = Math.min(TEST_QUESTION_COUNT, temp.length);
+            quizList = temp.slice(0, qCount);
+            
+            wrongList = []; currentIndex = 0; score = 0;
+            renderTestQuestion(); showScreen('test-screen');
+        }
+
+        function renderTestQuestion() {
+            if (currentIndex >= quizList.length) { finishGame(); return; }
+            isProcessing = false; 
+            const correctItem = quizList[currentIndex];
+            currentTestItem = correctItem;
+            
+            // [NEW] 문제 표시 (발음 작게, 일본어 크게)
+            document.getElementById('test-pron').innerText = correctItem.pron;
+            document.getElementById('test-jp').innerText = correctItem.jp;
+            
+            document.getElementById('test-progress').innerText = `${currentIndex + 1} / ${quizList.length}`;
+
+            // 오답 보기 생성 (뜻을 보여줌)
+            let options = [correctItem];
+            if (currentDataList.length >= 3) {
+                while (options.length < 3) {
+                    const randomItem = currentDataList[Math.floor(Math.random() * currentDataList.length)];
+                    // 중복 방지 (일본어가 다르면 다른 문제로 간주)
+                    if (!options.some(opt => opt.jp === randomItem.jp)) options.push(randomItem);
+                }
+            } else {
+                options = [...currentDataList]; // 데이터가 적으면 있는 것만
+            }
+            options.sort(() => Math.random() - 0.5);
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            options.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = item.mean; // 버튼에는 '뜻'을 표시
+                btn.onclick = () => checkTestAnswer(item, correctItem);
+                container.appendChild(btn);
+            });
+        }
+
+        function playTestSound() { if(currentTestItem) speakText(currentTestItem.jp); }
+
+        function checkTestAnswer(selectedItem, correctItem) {
+            if (isProcessing) return; isProcessing = true;
+            const isCorrect = (selectedItem.jp === correctItem.jp);
+            
+            if (isCorrect) { score++; showFeedback(true); } 
+            else { wrongList.push(correctItem); showFeedback(false); }
+            
+            setTimeout(() => { currentIndex++; renderTestQuestion(); }, 800); 
+        }
+
+        function showFeedback(isCorrect) {
+            const box = document.getElementById('feedback-box');
+            if (isCorrect) {
+                box.innerText = "정답! ⭕"; box.style.color = "green"; box.style.borderColor = "green";
+            } else {
+                box.innerText = "땡! ❌"; box.style.color = "red"; box.style.borderColor = "red";
+            }
+            box.style.display = 'flex'; 
+            setTimeout(() => { box.style.display = 'none'; }, 800);
+        }
+
+        function finishGame() {
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+            const total = quizList.length;
+            const finalScore = total === 0 ? 0 : Math.round((score / total) * 100);
+            document.getElementById('score-count').innerText = `맞은 개수: ${score} / ${total}`;
+            
+            let message = "", color = "#333";
+            if (finalScore === 100) { message = "완벽해요! 당신은 일본어 천재야! 🎉"; color = "#32CD32"; }
+            else if (finalScore >= 80) { message = "대단해! 아주 조금만 더 하면 만점이야! 🔥"; color = "#1E90FF"; }
+            else if (finalScore >= 60) { message = "잘했어! 합격점이야! 👍"; color = "#00CED1"; }
+            else if (finalScore >= 40) { message = "절반은 넘었어! 조금만 더 힘내자! 💪"; color = "#FFA500"; }
+            else if (finalScore >= 20) { message = "아직 헷갈리는 게 많구나... 복습 필수! 📚"; color = "#FF6347"; }
+            else if (finalScore > 0) { message = "이제 시작이야! 포기하지 마! 🌱"; color = "#FF4500"; }
+            else { message = "0점이라니... 찍어도 이것보단 잘 나오겠다! 😭"; color = "red"; }
+
+            const gradeMsg = document.getElementById('grade-msg');
+            gradeMsg.innerText = message; gradeMsg.style.color = color;
+            document.getElementById('final-score').innerText = `${finalScore} 점`;
+
+            if (wrongList.length > 0) document.getElementById('wrong-msg').style.display = 'block';
+            else document.getElementById('wrong-msg').style.display = 'none';
+            showScreen('result-screen');
+        }
+
+        function openWrongList() {
+            const tbody = document.getElementById('wrong-table-body');
+            tbody.innerHTML = '';
+            document.getElementById('wrong-count-display').innerText = `총 ${wrongList.length}개 틀림`;
+            wrongList.forEach(item => {
+                const tr = document.createElement('tr');
+                // 오답노트에도 3단 정보 표시 (단어 / 발음 / 뜻)
+                tr.innerHTML = `<td>${item.jp}</td><td>${item.pron}</td><td>${item.mean}</td>`;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('wrong-list-popup').style.display = 'flex';
+            document.querySelector('.popup-scroll-area').scrollTop = 0;
+        }
+
+        function closeWrongList() { document.getElementById('wrong-list-popup').style.display = 'none'; }
+    </script>
+</body>
+</html>
