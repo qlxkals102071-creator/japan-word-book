@@ -1,0 +1,139 @@
+        /* 기본 설정 */
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+
+        .screen { display: none; width: 100%; max-width: 500px; }
+        .active { display: block !important; }
+
+        h1 { color: #FF8C00; margin-bottom: 30px; line-height: 1.4; }
+
+        button {
+            background-color: #FFD700;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 10px;
+            margin: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-weight: bold;
+            width: 80%;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+        }
+        button:active { transform: scale(0.95); }
+
+        #global-mute-btn {
+            position: fixed; top: 10px; right: 10px;
+            width: 50px; height: 50px; border-radius: 50%;
+            padding: 0; font-size: 24px;
+            background-color: white; border: 2px solid #ddd;
+            z-index: 100; display: flex; align-items: center; justify-content: center;
+            width: auto !important; min-width: 50px;
+        }
+
+        #feedback-box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; height: 200px; background-color: white;
+            border: 5px solid #ccc; border-radius: 20px;
+            display: none; align-items: center; justify-content: center;
+            z-index: 200; font-size: 60px; font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        #wrong-list-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 300;
+        }
+
+        .popup-content {
+            background: white; padding: 20px; border-radius: 15px;
+            width: 90%; max-height: 80vh; text-align: center;
+            position: relative; display: flex; flex-direction: column;
+            align-items: center;
+        }
+
+        .popup-scroll-area {
+            overflow-y: auto; flex: 1; margin: 10px 0;
+            border-top: 1px solid #eee; border-bottom: 1px solid #eee; width: 100%;
+        }
+
+        .btn-popup-close-x {
+            position: absolute; top: 15px; right: 20px;
+            background: none; border: none; font-size: 28px;
+            font-weight: bold; color: #aaa; cursor: pointer;
+            width: auto !important; padding: 0; margin: 0; box-shadow: none; z-index: 10;
+        }
+
+        /* 버튼 색상 */
+        .btn-hira { background-color: #FFD700; color: #333; height: 80px; font-size: 22px; }
+        .btn-kata { background-color: #FFA500; color: white; height: 80px; font-size: 22px; }
+        .btn-sheet { background-color: #4CAF50; color: white; height: 80px; font-size: 22px; }
+        
+        .btn-mode-study { background-color: #87CEEB; color: white; height: 80px; font-size: 22px; }
+        .btn-mode-test { background-color: #FF6347; color: white; height: 80px; font-size: 22px; }
+        
+        .btn-count-20 { background-color: #20B2AA; color: white; height: 70px; font-size: 20px; }
+        .btn-count-30 { background-color: #FF69B4; color: white; height: 70px; font-size: 20px; }
+        .btn-count-40 { background-color: #FF7F50; color: white; height: 70px; font-size: 20px; }
+        .btn-count-all { background-color: #9370DB; color: white; height: 70px; font-size: 20px; }
+
+        .btn-home-small {
+            position: absolute; top: 10px; left: 10px; width: auto;
+            padding: 8px 15px; font-size: 14px; background-color: #ddd; color: #555;
+            box-shadow: none; z-index: 10;
+        }
+
+        .btn-sound { background-color: #87CEEB; color: white; margin-bottom: 30px; width: 60%;}
+        .btn-correct { background-color: #90EE90; width: 40%; }
+        .btn-wrong { background-color: #FFB6C1; width: 40%; }
+        
+        .btn-test-sound { 
+            background-color: #1E90FF; color: white; width: 40%; 
+            margin-top: 0px; margin-bottom: 30px; font-size: 18px; padding: 10px 20px;
+        }
+
+        .btn-option { 
+            background-color: white; border: 2px solid #FF8C00; color: #333; 
+            font-size: 22px; /* 단어 뜻이 길어질 수 있어서 조절 */
+            width: 30%; height: 100px; /* 높이 조금 키움 */
+            margin: 5px; padding: 5px;
+            overflow: hidden; text-overflow: ellipsis; 
+            display: flex; align-items: center; justify-content: center;
+            word-break: keep-all; line-height: 1.2;
+        }
+        .options-container { display: flex; justify-content: center; width: 100%; margin-top: 10px; }
+        .btn-close { background-color: #DDDDDD; width: 50%; margin-top: 20px;}
+
+        /* [NEW] 문제 표시 스타일 (발음 작게, 일본어 크게) */
+        .question-container { margin-top: 30px; margin-bottom: 10px; }
+        .pron-small { font-size: 30px; color: #888; margin-bottom: 5px; min-height: 40px;}
+        .jp-big { font-size: 70px; font-weight: bold; color: #333; line-height: 1.1; word-break: keep-all;}
+        
+        /* 공부 모드에서 보여줄 텍스트 */
+        .meaning-text { font-size: 40px; font-weight: bold; color: #1E90FF; margin: 20px 0; visibility: hidden; }
+
+        .score-text { font-size: 60px; font-weight: bold; color: #1E90FF; margin: 20px 0; }
+        .info-text { font-size: 18px; color: #555; margin-bottom: 10px; }
+        .grade-msg { font-size: 24px; font-weight: bold; margin: 15px 0; min-height: 30px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { border: 1px solid #ddd; padding: 15px; font-size: 18px; text-align: center; }
+        th { background-color: #FF8C00; color: white; }
+        
+        #loading-screen { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.9); z-index: 500;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
