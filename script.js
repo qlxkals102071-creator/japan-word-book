@@ -156,7 +156,7 @@ function updateGlobalHeader(currentScreenId) {
         else if (currentScreenId === 'list-view-screen') showScreen('quantity-select-screen');
         else if (currentScreenId === 'detail-view-screen') showScreen('list-view-screen');
         else if (currentScreenId === 'study-screen' || currentScreenId === 'test-screen') {
-            if(confirm("공부를 그만하고 나갈까요콩?")) showScreen('mode-select-screen');
+            if(confirm("공부를 그만하고 나갈까요?")) showScreen('mode-select-screen');
         }
         else if (currentScreenId === 'category-select-screen') goHome();
         else goHome();
@@ -499,7 +499,10 @@ function setSmartText(elementId, text) {
     } else if (len === 4) {
         el.style.fontSize = "60px";   // 4글자: 중간
     } else {
-        // 5글자 이상: 화면 폭(vw)에 맞춰서 반응형으로 (절대 안 잘림)
-        el.style.fontSize = "14vw"; 
+        // [수정된 부분] 5글자 이상일 때:
+        // clamp(최소크기, 권장크기, 최대크기)
+        // 화면이 좁으면 14vw로 꽉 차게 보이고, 
+        // 화면이 넓어도 55px(4글자일 때보다 작게)을 넘지 않게 제한합니다.
+        el.style.fontSize = "clamp(30px, 14vw, 55px)"; 
     }
 }
