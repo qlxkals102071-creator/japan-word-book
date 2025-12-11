@@ -4,12 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 일본어 정복 🦊</title>
-
+    <title>일본어 정복 🦊</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+
+    <div id="global-header" class="top-header" style="display:none;">
+        <div class="header-left-group">
+            <button id="btn-global-back" class="btn-header-icon">
+                <span style="font-size: 24px; font-weight: bold;">❮</span>
+            </button>
+            <button class="btn-header-icon" onclick="goHome()">🏠</button>
+        </div>
+
+        <div id="header-title" style="font-weight:bold; color:#555;"></div>
+        <div style="width: 50px;"></div>
+    </div>
 
     <button id="global-mute-btn" onclick="toggleGlobalMute()">🔊</button>
     <div id="feedback-box"></div>
@@ -28,8 +39,7 @@
     </div>
 
     <div id="category-select-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
-        <h1 style="color:#2E8B57">어떤 단어를<br>공부할까요? 🦊</h1>
+        <h1 style="color:#2E8B57; margin-top:20px;">어떤 단어를<br>공부할까요? 🦊</h1>
 
         <button class="btn-sheet" style="background-color: #FFB6C1;" onclick="selectSheetCategory('히라가나')">
             ひら 히라가나 단어<br><span style="font-size:14px">(한자 없는 기초 단어)</span>
@@ -45,8 +55,7 @@
     </div>
 
     <div id="mode-select-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
-        <h1 id="selected-mode-title">히라가나</h1>
+        <h1 id="selected-mode-title" style="margin-top:20px;">히라가나</h1>
         <p class="info-text">학습 방식을 선택하세요!</p>
         <button class="btn-mode-study" onclick="gotoQuantitySelect()">📖 공부하기<br><span style="font-size:14px">(카드
                 뒤집기)</span></button>
@@ -55,8 +64,7 @@
     </div>
 
     <div id="quantity-select-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
-        <h1 style="color:#87CEEB">공부 범위 선택</h1>
+        <h1 style="color:#87CEEB; margin-top:20px;">공부 범위 선택</h1>
         <p class="info-text">몇 개의 단어를 공부할까요?</p>
         <button class="btn-count-20" onclick="startStudy('20')">🌱 20개만 하기</button>
         <button class="btn-count-30" onclick="startStudy('30')">🎵 30개만 하기</button>
@@ -65,8 +73,7 @@
     </div>
 
     <div id="list-view-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
-        <h1 style="color:#20B2AA">단어 목록 🦊</h1>
+        <h1 style="color:#20B2AA; margin-top:20px;">단어 목록 🦊</h1>
         <p class="info-text">터치하면 자세히 볼 수 있어요콩!</p>
 
         <div class="popup-scroll-area" style="height: 60vh;">
@@ -85,29 +92,25 @@
     </div>
 
     <div id="detail-view-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
+        <div class="middle-zone">
+            <div class="question-container">
+                <div id="detail-pron" class="pron-small"></div>
+                <div id="detail-jp" class="jp-big"></div>
+            </div>
 
-        <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#20B2AA;">단어장 모드</div>
-
-        <div class="question-container">
-            <div id="detail-pron" class="pron-small"></div>
-            <div id="detail-jp" class="jp-big"></div>
-        </div>
-        <div id="detail-meaning" class="meaning-text" style="visibility: visible;">뜻</div>
-
-        <button class="btn-sound" onclick="playDetailSound()">🔊 소리 듣기</button>
-
-        <div style="display: flex; justify-content: center; gap: 20px; width: 80%; margin: 10px auto 30px auto;">
-            <button class="btn-control" onclick="showPrevDetail()">◀ 이전</button>
-            <button class="btn-control" onclick="showNextDetail()">다음 ▶</button>
+            <div id="detail-meaning" class="meaning-text" style="visibility: visible;">뜻</div>
+            <button class="btn-sound-icon" onclick="playDetailSound()">🔊</button>
         </div>
 
-        <button class="btn-close" style="width: 80%; background-color: #ddd;" onclick="backToList()">🔙 목록으로
-            돌아가기</button>
+        <div class="bottom-nav-group">
+            <div class="nav-row">
+                <button class="btn-control" onclick="showPrevDetail()">◀ 이전</button>
+                <button class="btn-control" onclick="showNextDetail()">다음 ▶</button>
+            </div>
+        </div>
     </div>
 
     <div id="study-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
         <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#FF8C00;">공부 모드</div>
         <div id="study-progress" class="info-text">1 / 46</div>
 
@@ -126,7 +129,6 @@
     </div>
 
     <div id="test-screen" class="screen">
-        <button class="btn-home-small" onclick="goHome()">🏠 처음으로</button>
         <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#FF6347;">시험 모드 (20문제)</div>
         <div id="test-progress" class="info-text">1 / 20</div>
 
@@ -142,14 +144,16 @@
     </div>
 
     <div id="result-screen" class="screen">
-        <h1>결과 발표!</h1>
+        <h1 style="margin-top:20px;">결과 발표!</h1>
         <div id="score-count" class="info-text">맞은 개수: 0 / 0</div>
-        <div id="grade-msg" class="grade-msg"></div>
+
         <div id="final-score" class="score-text">0 점</div>
+        <div id="grade-msg" class="grade-msg"></div>
+
         <div id="wrong-msg" style="display:none; margin-top:20px;">
             <button style="background-color: #FFB6C1;" onclick="openWrongList()">오답 목록 보기</button>
         </div>
-        <button style="background-color: #DDDDDD;" onclick="showScreen('start-screen')">처음으로</button>
+        <button style="background-color: #DDDDDD;" onclick="goHome()">처음으로</button>
     </div>
 
     <div id="wrong-list-popup">

@@ -1,452 +1,393 @@
-        /* 기본 설정 */
-        body {
-            font-family: 'Malgun Gothic', sans-serif;
-            text-align: center;
-            background-color: #f0f8ff;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 90vh;
-        }
+/* ========================================= */
+/* 1. 기본 설정 (Body & Layout) */
+/* ========================================= */
+* {
+    box-sizing: border-box; /* 테두리 포함 크기 계산 */
+}
 
-        .screen {
-            display: none;
-            width: 100%;
-            max-width: 500px;
-        }
+body {
+    font-family: 'Malgun Gothic', sans-serif;
+    text-align: center;
+    background-color: #f0f8ff;
+    margin: 0;
+    
+    /* [핵심 수정] 헤더가 고정되므로 내용을 아래로 밀어야 함 */
+    padding-top: 80px;  
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 
-        .active {
-            display: block !important;
-        }
+    /* [핵심 수정] 내용물 정렬 기준을 '위에서부터'로 변경 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    min-height: 100vh;
+}
 
-        h1 {
-            color: #FF8C00;
-            margin-bottom: 30px;
-            line-height: 1.4;
-        }
+/* ========================================= */
+/* 2. 상단 헤더 (위치 고정) */
+/* ========================================= */
+.top-header {
+    position: fixed;   /* 스크롤해도 무조건 위에 고정 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    
+    padding: 0 10px;
+    background-color: #f0f8ff; /* 본문 색과 맞춰서 자연스럽게 */
+    z-index: 1000;     /* 다른 내용보다 위에 */
+}
 
-        button {
-            background-color: #FFD700;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            margin: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-weight: bold;
-            width: 80%;
-            transition: transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
-        }
+.header-left-group {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* 버튼 사이 간격 */
+}
 
-        button:active {
-            transform: scale(0.95);
-        }
+/* 헤더용 아이콘 버튼 (투명) */
+.btn-header-icon {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 10px;
+    color: #555;
+    width: auto !important;
+    height: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    margin: 0;
+}
 
-        #global-mute-btn {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            padding: 0;
-            font-size: 24px;
-            background-color: white;
-            border: 2px solid #ddd;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: auto !important;
-            min-width: 50px;
-        }
+/* ========================================= */
+/* 3. 공통 UI 요소 (버튼, 텍스트) */
+/* ========================================= */
+h1 {
+    color: #FF8C00;
+    margin-bottom: 30px;
+    line-height: 1.4;
+}
 
-        #feedback-box {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            height: 200px;
-            background-color: white;
-            border: 5px solid #ccc;
-            border-radius: 20px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            font-size: 60px;
-            font-weight: bold;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
+.info-text {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
 
-        #wrong-list-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 300;
-        }
+/* 기본 버튼 스타일 */
+button {
+    background-color: #FFD700;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 10px;
+    margin: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+    width: 80%;
+    transition: transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        .popup-content {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            width: 90%;
-            max-height: 80vh;
-            text-align: center;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+button:active {
+    transform: scale(0.95);
+}
 
-        .popup-scroll-area {
-            overflow-y: auto;
-            flex: 1;
-            margin: 10px 0;
-            border-top: 1px solid #eee;
-            border-bottom: 1px solid #eee;
-            width: 100%;
-        }
+/* 소리 온오프 버튼 (우측 상단 고정) */
+#global-mute-btn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 24px;
+    background-color: white;
+    border: 2px solid #ddd;
+    z-index: 1100; /* 헤더보다 더 위에 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    margin: 0;
+}
 
-        .btn-popup-close-x {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 28px;
-            font-weight: bold;
-            color: #aaa;
-            cursor: pointer;
-            width: auto !important;
-            padding: 0;
-            margin: 0;
-            box-shadow: none;
-            z-index: 10;
-        }
+/* 화면 전환용 클래스 */
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 500px;
+}
+.active {
+    display: block !important;
+}
 
-        /* 버튼 색상 */
-        .btn-hira {
-            background-color: #FFD700;
-            color: #333;
-            height: 80px;
-            font-size: 22px;
-        }
+/* ========================================= */
+/* 4. 화면별 버튼 색상 및 스타일 */
+/* ========================================= */
+.btn-hira { background-color: #FFD700; color: #333; height: 80px; font-size: 22px; }
+.btn-kata { background-color: #FFA500; color: white; height: 80px; font-size: 22px; }
+.btn-sheet { background-color: #4CAF50; color: white; height: 80px; font-size: 22px; }
 
-        .btn-kata {
-            background-color: #FFA500;
-            color: white;
-            height: 80px;
-            font-size: 22px;
-        }
+.btn-mode-study { background-color: #87CEEB; color: white; height: 80px; font-size: 22px; }
+.btn-mode-test { background-color: #FF6347; color: white; height: 80px; font-size: 22px; }
 
-        .btn-sheet {
-            background-color: #4CAF50;
-            color: white;
-            height: 80px;
-            font-size: 22px;
-        }
+.btn-count-20 { background-color: #20B2AA; color: white; height: 70px; font-size: 20px; }
+.btn-count-30 { background-color: #FF69B4; color: white; height: 70px; font-size: 20px; }
+.btn-count-40 { background-color: #FF7F50; color: white; height: 70px; font-size: 20px; }
+.btn-count-all { background-color: #9370DB; color: white; height: 70px; font-size: 20px; }
 
-        .btn-mode-study {
-            background-color: #87CEEB;
-            color: white;
-            height: 80px;
-            font-size: 22px;
-        }
+/* ========================================= */
+/* 5. 단어장 상세 화면 (Middle Zone & Bottom Nav) */
+/* ========================================= */
 
-        .btn-mode-test {
-            background-color: #FF6347;
-            color: white;
-            height: 80px;
-            font-size: 22px;
-        }
+/* 상세 화면 컨테이너 */
+#detail-view-screen.active {
+    display: flex;
+    flex-direction: column;
+    height: 80vh; /* 화면 높이 확보 */
+    position: relative;
+}
 
-        .btn-count-20 {
-            background-color: #20B2AA;
-            color: white;
-            height: 70px;
-            font-size: 20px;
-        }
+/* 중앙 카드 영역 (절대 위치로 정중앙 배치) */
+.middle-zone {
+    position: absolute;
+    top: 40%;          /* 화면 높이의 40% 지점 */
+    left: 50%;
+    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
 
-        .btn-count-30 {
-            background-color: #FF69B4;
-            color: white;
-            height: 70px;
-            font-size: 20px;
-        }
+/* 단어 카드 내부 텍스트 */
+.question-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.pron-small { font-size: 30px; color: #888; margin-bottom: 5px; min-height: 40px; }
+.jp-big { font-size: 100px; font-weight: bold; color: #333; line-height: 1.1; word-break: keep-all; }
+.meaning-text { font-size: 40px; font-weight: bold; color: #1E90FF; margin: 20px 0; visibility: hidden; }
 
-        .btn-count-40 {
-            background-color: #FF7F50;
-            color: white;
-            height: 70px;
-            font-size: 20px;
-        }
+/* 상세 화면 소리 버튼 (동그라미) */
+.btn-sound-icon {
+    background-color: #87CEEB;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+    width: 60px !important; /* 강제 적용 */
+}
 
-        .btn-count-all {
-            background-color: #9370DB;
-            color: white;
-            height: 70px;
-            font-size: 20px;
-        }
+/* 하단 고정 내비게이션 그룹 */
+.bottom-nav-group {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    
+    background: white; /* 버튼 뒤 배경 */
+    padding-top: 10px;
+    padding-bottom: 30px; /* 아이폰 홈바 여백 */
+    
+    display: flex;
+    flex-direction: column; /* 세로 배치 */
+    align-items: center;
+    gap: 10px;
+    
+    z-index: 999;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
 
-        .btn-home-small {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: auto;
-            padding: 8px 15px;
-            font-size: 14px;
-            background-color: #ddd;
-            color: #555;
-            box-shadow: none;
-            z-index: 10;
-        }
+/* 이전/다음 버튼 줄 */
+.nav-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 95%;
+}
 
-        .btn-sound {
-            background-color: #87CEEB;
-            color: white;
-            margin-bottom: 30px;
-            width: 60%;
-        }
+/* 이전/다음/목록 버튼 공통 스타일 */
+.btn-control {
+    background-color: #20B2AA;
+    color: white;
+    border: none;
+    padding: 15px 0;
+    width: 100%;
+    flex: 1;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 12px;
+    margin: 0;
+}
 
-        .btn-correct {
-            background-color: #90EE90;
-            width: 40%;
-        }
+/* ========================================= */
+/* 6. 공부/시험 모드 스타일 */
+/* ========================================= */
+.btn-sound { background-color: #87CEEB; color: white; margin-top: 30px; margin-bottom: 30px; width: 50%; }
+.btn-correct { background-color: #90EE90; width: 40%; }
+.btn-wrong { background-color: #FFB6C1; width: 40%; }
 
-        .btn-wrong {
-            background-color: #FFB6C1;
-            width: 40%;
-        }
+.btn-test-sound { background-color: #1E90FF; color: white; width: 40%; margin-bottom: 30px; font-size: 18px; padding: 10px 20px; }
 
-        .btn-test-sound {
-            background-color: #1E90FF;
-            color: white;
-            width: 40%;
-            margin-top: 0px;
-            margin-bottom: 30px;
-            font-size: 18px;
-            padding: 10px 20px;
-        }
+.options-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 10px;
+}
 
-        .btn-option {
-            background-color: white;
-            border: 2px solid #FF8C00;
-            color: #333;
-            font-size: 22px;
-            /* 단어 뜻이 길어질 수 있어서 조절 */
-            width: 30%;
-            height: 100px;
-            /* 높이 조금 키움 */
-            margin: 5px;
-            padding: 5px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            word-break: keep-all;
-            line-height: 1.2;
-        }
+.btn-option {
+    background-color: white;
+    border: 2px solid #FF8C00;
+    color: #333;
+    font-size: 20px;
+    width: 30%;
+    height: 100px;
+    margin: 5px;
+    padding: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    word-break: keep-all;
+    line-height: 1.2;
+}
 
-        .options-container {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            margin-top: 10px;
-        }
+/* 결과 화면 점수 */
+.score-text { font-size: 60px; font-weight: bold; color: #1E90FF; margin: 20px 0; }
+.grade-msg { font-size: 24px; font-weight: bold; margin: 15px 0; min-height: 30px; }
 
-        .btn-close {
-            background-color: #DDDDDD;
-            width: 50%;
-            margin-top: 20px;
-        }
+/* ========================================= */
+/* 7. 리스트(테이블) 스타일 */
+/* ========================================= */
+.popup-scroll-area {
+    width: 100%;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
 
-        /* [NEW] 문제 표시 스타일 (발음 작게, 일본어 크게) */
-        .question-container {
-            margin-top: 30px;
-            margin-bottom: 10px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    table-layout: fixed;
+}
 
-        .pron-small {
-            font-size: 30px;
-            color: #888;
-            margin-bottom: 5px;
-            min-height: 40px;
-        }
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px 4px;
+    font-size: 16px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
-        .jp-big {
-            font-size: 70px;
-            font-weight: bold;
-            color: #333;
-            line-height: 1.1;
-            word-break: keep-all;
-        }
+th { background-color: #FF8C00; color: white; font-size: 18px; }
 
-        /* 공부 모드에서 보여줄 텍스트 */
-        .meaning-text {
-            font-size: 40px;
-            font-weight: bold;
-            color: #1E90FF;
-            margin: 20px 0;
-            visibility: hidden;
-        }
+/* ========================================= */
+/* 8. 팝업 (피드백, 오답노트, 로딩) */
+/* ========================================= */
+#feedback-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 200px;
+    background-color: white;
+    border: 5px solid #ccc;
+    border-radius: 20px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    font-size: 60px;
+    font-weight: bold;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
 
-        .score-text {
-            font-size: 60px;
-            font-weight: bold;
-            color: #1E90FF;
-            margin: 20px 0;
-        }
+#loading-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #ffffff;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 
-        .info-text {
-            font-size: 18px;
-            color: #555;
-            margin-bottom: 10px;
-        }
+#wrong-list-popup {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+}
 
-        .grade-msg {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 15px 0;
-            min-height: 30px;
-        }
+.popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-height: 80vh;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-        /* 테이블 스타일 (수정됨!) */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            table-layout: fixed;
-            /* 칸 크기를 공평하게 고정! */
-        }
+.btn-popup-close-x {
+    position: absolute;
+    top: 15px; right: 20px;
+    background: none; border: none;
+    font-size: 28px; font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    width: auto !important;
+    padding: 0; margin: 0;
+    box-shadow: none;
+}
 
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px 4px;
-            /* 양옆 여백을 확 줄임! */
-            font-size: 16px;
-            /* 기본 글자 크기 살짝 줄임 (20->16) */
-            text-align: center;
+.btn-close {
+    background-color: #eee;
+    color: #555;
+    width: 80%;
+    margin-top: 10px;
+}
 
-            /* [핵심] 한 줄로 만들기 마법 */
-            white-space: nowrap;
-            /* 절대 줄 바꿈 하지 마! */
-            overflow: hidden;
-            /* 넘치면 숨겨! */
-            text-overflow: ellipsis;
-            /* 너무 길면 ... 으로 표시 */
-        }
-
-        th {
-            background-color: #FF8C00;
-            color: white;
-            font-size: 18px;
-            /* 제목은 조금 더 크게 */
-        }
-
-        /* [NEW] 핸드폰 전용 스타일 (화면이 좁을 때만 적용) */
-        @media (max-width: 400px) {
-
-            th,
-            td {
-                font-size: 14px;
-                /* 폰에서는 글자 더 작게 */
-                padding: 8px 2px;
-                /* 여백도 최소화 */
-            }
-
-            /* 일본어 단어 부분만 글자 조금 더 크게 유지 */
-            td:first-child {
-                font-weight: bold;
-                font-size: 15px;
-            }
-
-            #loading-screen {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(255, 255, 255, 0.9);
-                z-index: 500;
-                display: none;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-        }
-
-        /* ========================================= */
-        /* 🦊 [추가] 로딩 화면 스타일 (화면 전체 덮기) */
-        /* ========================================= */
-        #loading-screen {
-            position: fixed;
-            /* 화면에 딱 고정! */
-            top: 0;
-            left: 0;
-            width: 100%;
-            /* 너비 꽉 채우기 */
-            height: 100%;
-            /* 높이 꽉 채우기 */
-            background-color: #ffffff;
-            /* 하얀색 배경으로 뒤에 가리기 */
-            z-index: 9999;
-            /* 다른 모든 것보다 맨 위에 있기! */
-
-            /* 내용물 가운데 정렬 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #loading-screen h2 {
-            color: #FF8C00;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        #loading-screen p {
-            color: #666;
-            font-size: 16px;
-        }
-
-        /* 🦊 [수정] 이전/다음 버튼 스타일 (꽉 찬 너비로 변경!) */
-        .btn-control {
-            background-color: #20B2AA;
-            color: white;
-            border: none;
-
-            /* 👇 여기가 핵심 변경 포인트! */
-            padding: 8px 0;
-            /* 상하 패딩만 주고 좌우는 뺌 */
-            width: 100%;
-            /* flex 아이템이라 100% 주면 알아서 꽉 참 */
-            flex: 1;
-            /* 부모 공간(80%)을 둘이서 공평하게 나눠 가짐 */
-
-            font-size: 13px;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s;
-        }
-
-        .btn-control:active {
-            transform: scale(0.95);
-        }
+/* ========================================= */
+/* 9. 모바일 대응 */
+/* ========================================= */
+@media (max-width: 400px) {
+    th, td { font-size: 14px; padding: 8px 2px; }
+    td:first-child { font-weight: bold; font-size: 15px; }
+}
