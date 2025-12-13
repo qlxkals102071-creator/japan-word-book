@@ -178,33 +178,6 @@ button:active {
     font-size: 22px;
 }
 
-.btn-count-20 {
-    background-color: #20B2AA;
-    color: white;
-    height: 70px;
-    font-size: 20px;
-}
-
-.btn-count-30 {
-    background-color: #FF69B4;
-    color: white;
-    height: 70px;
-    font-size: 20px;
-}
-
-.btn-count-40 {
-    background-color: #FF7F50;
-    color: white;
-    height: 70px;
-    font-size: 20px;
-}
-
-.btn-count-all {
-    background-color: #9370DB;
-    color: white;
-    height: 70px;
-    font-size: 20px;
-}
 
 /* ========================================= */
 /* 5. 단어장 상세 화면 (Middle Zone & Bottom Nav) */
@@ -324,34 +297,6 @@ button:active {
     font-weight: bold;
     border-radius: 12px;
     margin: 0;
-}
-
-/* ========================================= */
-/* 6. 공부/시험 모드 스타일 */
-/* ========================================= */
-.btn-sound {
-    background-color: #87CEEB;
-    color: white;
-    margin-top: 30px;
-    margin-bottom: 30px;
-    /* 1. 너비를 50% -> 70%로 넓혀서 숨통을 틔워줍니다 */
-    width: 70%;
-
-    /* 2. 화면이 아무리 좁아도 글자가 두 줄로 내려가지 않게 강제합니다 */
-    white-space: nowrap;
-
-    /* 3. 혹시라도 화면이 더 작아지면 글자 크기도 알아서 살짝 줄어들게 합니다 */
-    font-size: clamp(14px, 4vw, 18px);
-}
-
-.btn-correct {
-    background-color: #90EE90;
-    width: 40%;
-}
-
-.btn-wrong {
-    background-color: #FFB6C1;
-    width: 40%;
 }
 
 .btn-test-sound {
@@ -546,4 +491,160 @@ th {
         font-weight: bold;
         font-size: 15px;
     }
+}
+
+/* ========================================= */
+/* 🦊 [NEW] 카테고리 리스트 영역 (자동 생성 버튼들이 들어갈 곳) */
+/* ========================================= */
+#category-list-area {
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column; /* 세로로 쌓기 */
+    align-items: center;    /* 가운데 정렬 */
+    
+    overflow-y: auto;       /* 버튼이 많아지면 스크롤 생김! */
+    max-height: 60vh;       /* 화면의 60% 높이까지만 차지 */
+    
+    gap: 10px;              /* 버튼 사이 간격 */
+    padding: 10px 0;        /* 위아래 살짝 여유 */
+}
+
+/* 🦊 [NEW] 루비(Furigana) 스타일 카드 디자인 */
+.kana-card {
+    width: 130px;
+    height: 150px;
+    background-color: #ffffff;
+    border-radius: 20px;
+    border: none;
+    
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    align-items: center;
+    justify-content: center;
+    
+    /* 루비 문자는 글자끼리 가까워야 예쁘므로 gap을 줄입니다 */
+    gap: 0px; 
+    
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.kana-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.kana-card:active {
+    transform: scale(0.95);
+    background-color: #f8f9fa;
+}
+
+/* 1. 발음 (이제 위에 뜹니다! 루비 문자처럼 작게) */
+.kana-pron {
+    font-size: 16px;       /* 글자 크기 적당히 */
+    color: #888;           /* 회색으로 은은하게 */
+    font-weight: bold;
+    margin-bottom: -5px;   /* 글자랑 딱 붙게 마이너스 여백 줌 */
+    z-index: 1;            /* 글자보다 앞으로 */
+}
+
+/* 2. 일본어 글자 (메인 주인공) */
+.kana-char {
+    font-size: 64px;       /* 큼직하게! */
+    font-weight: 900;      /* 두껍게! */
+    color: #333;
+    line-height: 1.2;      /* 줄 간격 확보 */
+}
+
+/* 🦊 [NEW] 탭 컨테이너 */
+.tab-container {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    
+    width: 100%;             /* 화면 너비 다 쓰기 */
+    max-width: 500px;        /* 태블릿에서도 너무 넓어지지 않게 제한 */
+    margin: 0 auto 20px auto; /* 중앙 정렬 + 아래 여백 */
+    
+    gap: 8px;                /* 버튼 사이 간격 살짝 좁힘 (공간 확보) */
+}
+
+/* 🦊 [수정] 탭 버튼 (유동적인 크기) */
+.tab-btn {
+    flex: 1;                 /* ★핵심: 남은 공간을 형제들과 똑같이 나눠 가짐! */
+    
+    padding: 12px 0;         /* 좌우 여백 없애고 위아래 높이만 확보 */
+    font-size: 15px;         /* 글자 크기 적당히 (너무 크면 짤림) */
+    font-weight: bold;
+    
+    border: 2px solid #ddd;
+    background-color: white;
+    color: #555;
+    border-radius: 15px;
+    
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;     /* 글자가 길어도 절대 두 줄로 안 내려감 */
+    
+    /* 텍스트 넘침 방지 (혹시나 화면이 너무 작을 때) */
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
+
+/* 선택된 탭 (활성 상태) - 기존 유지 */
+.tab-btn.active {
+    background-color: #FF8C00;
+    color: white;
+    border-color: #FF8C00;
+    transform: scale(1.02); /* 커지는 효과 살짝 줄임 (옆 친구 밀지 않게) */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* 🦊 [수정] 카드 컨테이너 정렬 개선 */
+/* 기존의 flex-wrap도 좋지만, gap을 늘리고 중앙 정렬을 확실하게 합니다 */
+#kana-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* 무조건 가운데로 모여라! */
+    align-content: flex-start;
+    gap: 20px; /* 카드 사이 간격 시원하게 */
+    
+    /* 화면이 넓어져도 너무 퍼지지 않게 폭 제한 */
+    max-width: 600px; 
+    margin: 0 auto; /* 화면 중앙 배치 */
+}
+
+/* 🦊 [NEW] 행 선택 화면: 2열 격자(Grid) 레이아웃 */
+#kana-row-list-area {
+    width: 100%;
+    padding: 10px;
+    
+    /* 여기서 격자 마법을 부립니다! */
+    display: grid;
+    
+    /* 1fr 1fr = 똑같은 크기로 2개 나누기 (2열) */
+    grid-template-columns: 1fr 1fr; 
+    
+    /* 버튼 사이 간격 */
+    gap: 15px;
+    
+    /* 화면 넘어가면 스크롤 */
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+/* 격자 안에 들어가는 버튼들 미세 조정 */
+#kana-row-list-area .btn-sheet {
+    width: 100%;       /* 칸을 꽉 채우게 */
+    height: 70px;      /* 높이는 적당하게 */
+    margin: 0;         /* 쓸데없는 여백 제거 */
+    font-size: 18px;   /* 글자 크기 조정 */
+    
+    /* 글자가 길어져도 줄바꿈 없이 한 줄에 예쁘게 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

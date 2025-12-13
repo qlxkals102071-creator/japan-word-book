@@ -31,45 +31,45 @@
     </div>
 
     <div id="start-screen" class="screen active">
-        <h1>일본어 문자 & 단어<br>완전 정복 🦊</h1>
-        <p class="info-text">공부할 내용을 선택하세요!</p>
-        <button class="btn-hira" onclick="selectCharType('hiragana')">히라가나 (あ)</button>
-        <button class="btn-kata" onclick="selectCharType('katakana')">카타카나 (ア)</button>
-        <button class="btn-sheet" onclick="showCategorySelect()">일본어 단어장 📄</button>
+        <h1>일본어 완전 정복 🦊</h1>
+        <p class="info-text">무엇을 공부할까요?</p>
+        
+        <button class="btn-sheet" style="background-color: #FFD700; color:#333;" onclick="showLetterSelect()">
+            あ 문자 공부<br><span style="font-size:14px">(히라가나 / 카타카나)</span>
+        </button>
+        
+        <button class="btn-sheet" style="background-color: #4CAF50;" onclick="showCategorySelect()">
+            📄 단어 공부<br><span style="font-size:14px">(장르별 단어장)</span>
+        </button>
+    </div>
+
+    <div id="letter-select-screen" class="screen">
+        <h1 style="color:#FF8C00; margin-top:20px;">문자 선택 🦊</h1>
+        <p class="info-text">어떤 문자를 익힐까요?</p>
+
+        <button class="btn-hira" onclick="showKanaRowSelect('hiragana')">히라가나 (あ)</button>
+        <button class="btn-kata" onclick="showKanaRowSelect('katakana')">카타카나 (ア)</button>
     </div>
 
     <div id="category-select-screen" class="screen">
         <h1 style="color:#2E8B57; margin-top:20px;">어떤 단어를<br>공부할까요? 🦊</h1>
-
-        <button class="btn-sheet" style="background-color: #FFB6C1;" onclick="selectSheetCategory('히라가나')">
-            ひら 히라가나 단어<br><span style="font-size:14px">(한자 없는 기초 단어)</span>
-        </button>
-
-        <button class="btn-sheet" style="background-color: #FFA07A;" onclick="selectSheetCategory('카타카나')">
-            カタ 카타카나 단어<br><span style="font-size:14px">(외래어 등)</span>
-        </button>
-
-        <button class="btn-sheet" style="background-color: #87CEFA;" onclick="selectSheetCategory('한자')">
-            漢字 한자 단어<br><span style="font-size:14px">(한자와 읽는 법)</span>
-        </button>
+        
+        <div id="category-list-area">
+            </div>
     </div>
 
     <div id="mode-select-screen" class="screen">
         <h1 id="selected-mode-title" style="margin-top:20px;">히라가나</h1>
         <p class="info-text">학습 방식을 선택하세요!</p>
-        <button class="btn-mode-study" onclick="gotoQuantitySelect()">📖 공부하기<br><span style="font-size:14px">(카드
-                뒤집기)</span></button>
-        <button class="btn-mode-test" onclick="startTest()">📝 시험보기<br><span style="font-size:14px">(객관식
-                테스트)</span></button>
-    </div>
+        <button class="btn-mode-study" onclick="startStudyList()">
+            📖 목록 보며 공부하기<br>
+            <span style="font-size:14px">(전체 리스트)</span>
+        </button>
 
-    <div id="quantity-select-screen" class="screen">
-        <h1 style="color:#87CEEB; margin-top:20px;">공부 범위 선택</h1>
-        <p class="info-text">몇 개의 단어를 공부할까요?</p>
-        <button class="btn-count-20" onclick="startStudy('20')">🌱 20개만 하기</button>
-        <button class="btn-count-30" onclick="startStudy('30')">🎵 30개만 하기</button>
-        <button class="btn-count-40" onclick="startStudy('40')">🔥 40개 도전</button>
-        <button class="btn-count-all" onclick="showTotalList()">👑 전체 목록 보기</button>
+        <button class="btn-mode-test" onclick="startTest()">
+            📝 시험보기<br>
+            <span style="font-size:14px">(20문제 랜덤)</span>
+        </button>
     </div>
 
     <div id="list-view-screen" class="screen">
@@ -107,24 +107,6 @@
                 <button class="btn-control" onclick="showPrevDetail()">◀ 이전</button>
                 <button class="btn-control" onclick="showNextDetail()">다음 ▶</button>
             </div>
-        </div>
-    </div>
-
-    <div id="study-screen" class="screen">
-        <div class="info-text" style="margin-top: 40px; font-weight:bold; color:#FF8C00;">공부 모드</div>
-        <div id="study-progress" class="info-text">1 / 46</div>
-
-        <div class="question-container">
-            <div id="study-pron" class="pron-small"></div>
-            <div id="study-jp" class="jp-big"></div>
-        </div>
-
-        <div id="study-meaning" class="meaning-text">뜻</div>
-
-        <button class="btn-sound" onclick="playSoundAndShowText()">🔊 발음/뜻 보기</button>
-        <div style="display: flex; justify-content: center; gap: 10px;">
-            <button class="btn-correct" onclick="checkStudyAnswer(true)">알아요!</button>
-            <button class="btn-wrong" onclick="checkStudyAnswer(false)">몰라요</button>
         </div>
     </div>
 
@@ -175,6 +157,20 @@
             </div>
             <button class="btn-close" onclick="closeWrongList()">닫기 (Close)</button>
         </div>
+    </div>
+
+    <div id="kana-row-select-screen" class="screen">
+        <h1 style="color:#FF8C00; margin-top:20px;">어떤 행을 공부할까요?</h1>
+        <div id="kana-row-list-area"></div>
+    </div>
+
+    <div id="kana-study-screen" class="screen">
+        <h1 id="kana-study-title" style="margin-top:20px;">아행 공부</h1>
+        
+        <div id="kana-tab-container" class="tab-container"></div>
+
+        <div id="kana-card-container" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 20px; max-width: 800px; margin: 0 auto;">
+            </div>
     </div>
 
     <script src="script.js"></script>
