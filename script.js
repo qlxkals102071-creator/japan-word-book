@@ -7,6 +7,7 @@ const GOOGLE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQGxiR
 // 🦊 0. 데이터 정의 (히라가나, 카타카나, 행 데이터)
 // ============================================================
 const hiraganaRaw = {
+    // 아행 ~ 마행 (정상)
     'あ': '아', 'い': '이', 'う': '우', 'え': '에', 'お': '오',
     'か': '카', 'き': '키', 'く': '쿠', 'け': '케', 'こ': '코',
     'さ': '사', 'し': '시', 'す': '스', 'せ': '세', 'そ': '소',
@@ -14,11 +15,13 @@ const hiraganaRaw = {
     'な': '나', 'に': '니', 'ぬ': '누', 'ね': '네', 'の': '노',
     'は': '하', 'ひ': '히', 'ふ': '후', 'へ': '헤', 'ほ': '호',
     'ま': '마', 'み': '미', 'む': '무', 'め': '메', 'も': '모',
-    '나': '나', '니': '니', '누': '누', '네': '네', '노': '노', // 중복 방지용 안전장치
-    '야': '야', '유': '유', '요': '요',
-    '라': '라', '리': '리', '루': '루', '레': '레', '로': '로',
-    '와': '와', '오': '오', '응': '응', 'ん': '응',
-    'わ': '와', 'を': '오',
+
+    // ★ 여기가 문제였음! (한글 키 -> 일본어 키로 수정됨)
+    'や': '야', 'ゆ': '유', 'よ': '요',
+    'ら': '라', 'り': '리', 'る': '루', 'れ': '레', 'ろ': '로',
+    'わ': '와', 'を': '오', 'ん': '응', 
+
+    // 탁음 & 반탁음 (정상)
     'が': '가', 'ぎ': '기', 'ぐ': '구', 'げ': '게', 'ご': '고',
     'ざ': '자', 'じ': '지', 'ず': '즈', 'ぜ': '제', 'ぞ': '조',
     'だ': '다', 'ぢ': '지', 'づ': '즈', 'で': '데', 'ど': '도',
@@ -27,21 +30,26 @@ const hiraganaRaw = {
 };
 
 const katakanaRaw = {
+    // 아행 ~ 마행
     'ア': '아', 'イ': '이', 'ウ': '우', 'エ': '에', 'オ': '오',
     'カ': '카', 'キ': '키', 'ク': '쿠', 'ケ': '케', 'コ': '코',
     'サ': '사', 'シ': '시', 'ス': '스', 'セ': '세', 'ソ': '소',
     'タ': '타', 'チ': '치', 'ツ': '츠', 'テ': '테', 'ト': '토',
     'ナ': '나', 'ニ': '니', 'ヌ': '누', 'ネ': '네', 'ノ': '노',
-    'ハ': '하', 'ヒ': '히', 'フ': '후', '헤': '헤', 'ホ': '호', 'ヘ': '헤',
-    'マ': '마', 'ミ': '미', 'ム': '무', '메': '메', 'モ': '모', 'メ': '메',
+    'ハ': '하', 'ヒ': '히', 'フ': '후', 'ヘ': '헤', 'ホ': '호',
+    'マ': '마', 'ミ': '미', 'ム': '무', 'メ': '메', 'モ': '모',
+
+    // ★ 여기도 확인!
     'ヤ': '야', 'ユ': '유', 'ヨ': '요',
-    'ラ': '라', '리': '리', 'ル': '루', 'レ': '레', '로': '로', 'リ': '리', 'ロ': '로',
+    'ラ': '라', 'リ': '리', 'ル': '루', 'レ': '레', 'ロ': '로',
     'ワ': '와', 'ヲ': '오', 'ン': '응',
+
+    // 탁음 & 반탁음
     'ガ': '가', 'ギ': '기', 'グ': '구', 'ゲ': '게', 'ゴ': '고',
     'ザ': '자', 'ジ': '지', 'ズ': '즈', 'ゼ': '제', 'ゾ': '조',
     'ダ': '다', 'ヂ': '지', 'ヅ': '즈', 'デ': '데', 'ド': '도',
     'バ': '바', 'ビ': '비', 'ブ': '부', 'ベ': '베', 'ボ': '보',
-    'パ': '파', 'ピ': '피', 'プ': '푸', '페': '페', 'ポ': '포', 'ペ': '페'
+    'パ': '파', 'ピ': '피', 'プ': '푸', 'ペ': '페', 'ポ': '포'
 };
 
 // ★ [수정됨] 행(Row)별 데이터 (카타카나 이름표 + 탁음/반탁음 분리 완벽 적용)
@@ -214,11 +222,27 @@ function updateGlobalHeader(currentScreenId) {
     if(titleArea) titleArea.innerText = "";
 
     backBtn.onclick = function() {
-        if (currentScreenId === 'mode-select-screen') {
-            if (currentMode === 'sheet') {
-                showScreen('category-select-screen'); 
-            } else {
-                showScreen('letter-select-screen'); 
+        // 1. [3단계] 학습 방법 선택 화면 -> [2단계] 문자 선택 화면으로
+        if (currentScreenId === 'kana-mode-select-screen') {
+            showScreen('letter-select-screen');
+        }
+        
+        // 2. [4단계 A] 행 선택 화면 -> [3단계] 학습 방법 선택 화면으로
+        else if (currentScreenId === 'kana-row-select-screen') {
+            showScreen('kana-mode-select-screen');
+        }
+        
+        // 3. [5단계] 행 학습(카드) 화면 -> [4단계 A] 행 선택 화면으로
+        else if (currentScreenId === 'kana-study-screen') {
+            showScreen('kana-row-select-screen');
+        }
+        
+        // 4. [시험 화면] -> [3단계] 학습 방법 선택 화면으로 (중도 포기 시)
+        else if (currentScreenId === 'test-screen') {
+            if(confirm("시험을 그만두고 나갈까요콩?")) {
+                // 단어장이면 모드 선택으로, 문자면 방법 선택으로
+                if (currentMode === 'sheet') showScreen('mode-select-screen');
+                else showScreen('kana-mode-select-screen');
             }
         }
         else if (currentScreenId === 'letter-select-screen') goHome(true);
@@ -578,30 +602,44 @@ function showFeedback(isCorrect) {
     setTimeout(() => { box.style.display = 'none'; }, 800);
 }
 
+// [수정] 게임 종료 및 결과 처리 (주인님의 HTML 양식에 맞춤!)
 function finishGame() {
+    // 혹시 말하고 있었다면 멈춤
     if (window.speechSynthesis) window.speechSynthesis.cancel();
+    
     const total = quizList.length;
     const finalScore = total === 0 ? 0 : Math.round((score / total) * 100);
     
+    // 1. 점수 텍스트 업데이트
+    // 주인님 HTML: <div id="score-count">맞은 개수: 0 / 0</div>
     document.getElementById('score-count').innerText = `맞은 개수: ${score} / ${total}`;
     
-    const circle = document.querySelector('.score-circle');
-    circle.style.background = `conic-gradient(#20B2AA ${finalScore}%, #ddd ${finalScore}%)`;
+    // 주인님 HTML: <div id="final-score">0 점</div>
+    document.getElementById('final-score').innerText = `${finalScore} 점`;
 
-    let message = "", color = "#333";
-    if (finalScore === 100) { message = "완벽해요! 🎉"; color = "#32CD32"; }
-    else if (finalScore >= 80) { message = "대단해! 🔥"; color = "#1E90FF"; }
-    else if (finalScore >= 60) { message = "잘했어! 👍"; color = "#00CED1"; }
-    else { message = "복습 필수! 😭"; color = "red"; }
+    // 2. 등급 메시지 및 색상 설정
+    let message = "";
+    let color = "#333";
 
+    if (finalScore === 100) { message = "완벽해요! 🎉"; color = "#32CD32"; } // 라임색
+    else if (finalScore >= 80) { message = "대단해! 🔥"; color = "#1E90FF"; } // 파란색
+    else if (finalScore >= 60) { message = "잘했어! 👍"; color = "#00CED1"; } // 청록색
+    else { message = "복습이 필요해요 😭"; color = "red"; } // 빨간색
+
+    // 주인님 HTML: <div id="grade-msg"></div>
     const gradeMsg = document.getElementById('grade-msg');
     gradeMsg.innerText = message; 
     gradeMsg.style.color = color;
-    document.getElementById('final-score').innerText = `${finalScore} 점`;
     
-    if (wrongList.length > 0) document.getElementById('wrong-msg').style.display = 'block';
-    else document.getElementById('wrong-msg').style.display = 'none';
+    // 3. 틀린 문제가 있으면 '오답 목록 보기' 버튼 보이기
+    // 주인님 HTML: <div id="wrong-msg" style="display:none;">
+    if (wrongList.length > 0) {
+        document.getElementById('wrong-msg').style.display = 'block';
+    } else {
+        document.getElementById('wrong-msg').style.display = 'none';
+    }
     
+    // 4. 결과 화면으로 이동!
     showScreen('result-screen');
 }
 
@@ -630,4 +668,85 @@ function setSmartText(elementId, text) {
     else if (len === 3) el.style.fontSize = "80px";
     else if (len === 4) el.style.fontSize = "60px";
     else el.style.fontSize = "clamp(30px, 14vw, 55px)"; 
+}
+
+// [3단계 진입] 히라/카타 선택 후 -> 학습 방법 선택 화면으로
+function showKanaModeSelect(type) {
+    currentMode = type; // 'hiragana' 또는 'katakana' 저장
+    
+    // 제목을 예쁘게 바꿔줍니다
+    const title = document.getElementById('kana-mode-title');
+    if (type === 'hiragana') title.innerText = "히라가나 학습";
+    else title.innerText = "카타카나 학습";
+    
+    showScreen('kana-mode-select-screen');
+}
+
+// [4단계 A] 공부 선택 -> 행 선택 화면(Grid) 보여주기
+function startKanaStudyMode() {
+    // 저장된 모드(히라/카타)에 맞춰서 행 버튼들을 생성합니다.
+    const listArea = document.getElementById('kana-row-list-area');
+    if (!listArea) return;
+    listArea.innerHTML = ''; 
+
+    kanaRows.forEach(row => {
+        const btn = document.createElement('button');
+        btn.className = 'btn-sheet';
+        
+        // 색상 및 텍스트 설정
+        if (currentMode === 'hiragana') {
+            btn.style.backgroundColor = '#FFD700'; 
+            btn.style.color = '#333';
+            btn.innerText = row.name;
+        } else {
+            btn.style.backgroundColor = '#FFA500'; 
+            btn.style.color = 'white';
+            btn.innerText = row.nameKata;
+        }
+        
+        btn.onclick = () => showKanaStudy(row);
+        listArea.appendChild(btn);
+    });
+    
+    showScreen('kana-row-select-screen');
+}
+
+// [4단계 B] 시험 선택 -> 바로 랜덤 시험 시작
+function startKanaTestMode() {
+    // 1. 시험용 데이터 생성 (모든 행을 합침)
+    currentDataList = [];
+    
+    kanaRows.forEach(row => {
+        // 기본, 탁음, 반탁음 글자 모두 가져오기
+        const allChars = [...row.basic, ...row.daku, ...row.handaku];
+        
+        allChars.forEach(char => {
+            let jpChar = char;
+            let pron = hiraganaRaw[char];
+            
+            // 카타카나 모드면 글자 변환
+            if (currentMode === 'katakana') {
+                for (let [k, v] of Object.entries(katakanaRaw)) {
+                    if (v === pron) {
+                        jpChar = k;
+                        break;
+                    }
+                }
+            }
+            
+            // 시험 데이터 포맷으로 변환
+            currentDataList.push({
+                jp: jpChar,
+                pron: pron,
+                mean: pron // 문자는 '뜻'이 곧 '발음'
+            });
+        });
+    });
+
+    // 2. 시험 시작 함수 호출
+    if (currentDataList.length === 0) {
+        alert("시험 볼 데이터가 없어요콩!");
+        return;
+    }
+    startTest(); 
 }
